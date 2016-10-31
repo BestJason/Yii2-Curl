@@ -402,7 +402,15 @@ class Curl
         if (!is_null(curl_getinfo($this->_curl, CURLINFO_CONTENT_TYPE))) {
 
             //extract response type
-            list($this->responseType, $possible_charset) = explode(';', curl_getinfo($this->_curl, CURLINFO_CONTENT_TYPE));
+            $info = explode(';', curl_getinfo($this->_curl, CURLINFO_CONTENT_TYPE));
+            if (count($info) > 1) {
+                list($this->responseType, $possible_charset) = $info;
+            } else {
+                list($this->responseType) = $info;
+            }
+            if (!isset($possible_charset)) {
+                $possible_charset = 'utf-8';
+            }
 
             //extract charset
             if (preg_match('~^charset=(.+?)$~', trim($possible_charset), $matches) && isset($matches[1])) {
